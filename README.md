@@ -1,1 +1,89 @@
-📱 Tap-To-Pay ProjectTeam ID: ZephyrA smart, secure, and seamless digital payment ecosystem for the modern cashless world.🚀 OverviewTap-To-Pay is an integrated IoT payment solution that bridges the gap between physical hardware and digital finance. Users can perform near-instantaneous transactions by tapping RFID cards on an IoT-enabled reader. By leveraging MQTT for low-latency communication, the system ensures that transaction balances are synchronized in real-time across the backend and the user dashboard.🎯 Key ObjectivesEfficiency: Reduce transaction friction in small businesses and campuses.Scalability: Provide a modular architecture suitable for transport systems.Security: Ensure secure status updates and encrypted messaging between devices.✨ FeaturesRFID Integration: High-precision card detection and data retrieval.Real-Time Sync: Instant balance updates via asynchronous messaging.MQTT Architecture: Robust communication protocol between IoT hardware and the server.Live Monitoring: A dedicated web dashboard for tracking transaction history and device status.Secure Transactions: Validated status updates to prevent duplicate or failed billing.🛠️ Technologies UsedComponentTechnologyIoT HardwareESP8266 MicrocontrollerScanning TechRFID (Radio Frequency Identification)BackendPython Flask FrameworkMessagingMQTT ProtocolFrontendWeb Dashboard (HTML/CSS/JS)🖥️ Live AccessThe frontend application is deployed and can be accessed via the link below:👉 Launch Dashboard
+💳 Tap-To-Pay Smart Payment System
+
+
+🔒 Secure RFID-Based Cashless Payment System using ESP8266 + MQTT + Backend Validation
+
+🌐 Frontend Application
+
+👉 Live Frontend Dashboard:
+🔗 http://157.173.101.159:9277/
+
+The frontend dashboard allows:
+
+Transaction monitoring
+
+Wallet balance tracking
+
+Payment history viewing
+
+System analytics visualization
+
+🏗 System Architecture
+RFID Card
+   ↓
+ESP8266 IoT Device
+   ↓
+MQTT Broker Communication
+   ↓
+Backend API Validation
+   ↓
+Database Transaction Storage
+   ↓
+Web Dashboard Updates
+✨ Features
+
+✔ RFID Card Authentication
+✔ Real-time Payment Processing
+✔ Secure Wallet Balance Verification
+✔ Transaction Ledger Recording
+✔ Dashboard Monitoring System
+✔ Safe Payment Update Mechanism
+
+🧠 Technologies Used
+Hardware
+
+ESP8266 Microcontroller
+
+RFID Reader Module
+
+Buzzer Feedback System
+
+Software
+
+MQTT Communication Protocol
+
+Backend API Service
+
+Database Storage System
+
+Web Frontend Dashboard
+
+⚡ Installation
+Clone Project
+git clone https://github.com/utujesandrine456/Tap-To-Pay.git
+Navigate Project
+cd Tap-To-Pay
+🔌 Hardware Connection
+Component	ESP8266 Pin
+RFID SDA	D2
+RFID SCK	D5
+RFID MOSI	D7
+RFID MISO	D6
+Buzzer	D1
+💰 Payment Processing Flow
+RFID Scan
+   ↓
+Send UID via MQTT
+   ↓
+Backend Validates Balance
+   ↓
+Update Wallet + Ledger
+   ↓
+Send Response to Device
+🔐 Security Design
+
+Backend controlled authorization
+
+Ledger-based transaction auditing
+
+Safe wallet update logic
