@@ -1,73 +1,149 @@
-💳 Tap-To-Pay Smart Payment System
-⭐ Secure RFID Cashless Payment Platform
-🌐 Frontend Dashboard
+🚀 Zephyr: RFID Smart Payment System
+🌟 Overview
 
-🔗 Live Frontend:
-👉 https://tap-to-pay-frontend.vercel.app
+Zephyr is a smart RFID-based payment system designed for fast, secure, and real-time transactions. The platform integrates hardware sensing, backend processing, and a modern web dashboard to create a seamless payment experience.
 
-🏗 System Architecture
-RFID Card
-   ↓
-ESP8266 IoT Device
-   ↓
-MQTT Broker Communication
-   ↓
-Backend API Validation
-   ↓
-Database Storage
-   ↓
-Frontend Dashboard Display
+Users can scan RFID cards, check balances instantly, perform top-ups, and purchase products from an interactive dashboard.
+
 ✨ Features
 
-✔ Secure RFID Authentication
-✔ Real-time Wallet Balance Verification
-✔ Transaction Ledger Recording
-✔ MQTT IoT Communication
-✔ Dashboard Monitoring
+✅ Real-time RFID card detection
+✅ Instant balance and transaction updates
+✅ Secure payment and top-up system
+✅ Live dashboard synchronization
+✅ Centralized backend business logic
+✅ Persistent transaction storage using SQLite
 
-🧠 Technology Stack
-🔌 Hardware Layer
+🏗 System Architecture
+🧩 Hardware Layer (ESP8266 + RFID)
 
-ESP8266 Microcontroller
+Device: ESP8266
 
-RFID Reader Module
+RFID Module: MFRC522
 
-Buzzer Feedback System
+Functions:
 
-💻 Software Layer
+Connects to WiFi and MQTT broker
 
-MQTT Protocol
+Reads RFID card UID
 
-Backend API Service
+Sends transaction data to backend
 
-Database Storage
+Writes updated balance to cards
 
-Web Frontend Dashboard
+Code located in:
 
-⚡ Installation
-git clone https://github.com/utujesandrine456/Tap-To-Pay.git
-cd Tap-To-Pay
-🔌 Hardware Pin Connections
-Component	ESP8266 Pin
-RFID SDA	D2
-RFID SCK	D5
-RFID MOSI	D7
-RFID MISO	D6
-Buzzer	D1
-💰 Payment Processing Flow
-RFID Scan
-   ↓
-Device Sends UID
-   ↓
-Backend Checks Balance
-   ↓
-Transaction Approved / Rejected
-   ↓
-Update Database + Dashboard
-🔐 Security Features
+ESP_RFID/ESP_RFID.ino
+⚙ Backend Layer (Flask Server)
 
-✔ Backend balance verification
+Framework: Flask
 
-✔ Transaction auditing ledger
+Database: SQLite
 
-✔ Safe wallet update logic
+Communication:
+
+MQTT → Hardware communication
+
+Socket.IO → Frontend real-time updates
+
+Responsibilities:
+
+Manage users and balances
+
+Process payments and deposits
+
+Broadcast dashboard updates
+
+Main file:
+
+backend/app.py
+🎨 Frontend Layer
+
+Technologies:
+
+Tailwind CSS
+
+Socket.IO
+
+JavaScript
+
+Features:
+
+Museum-themed interactive dashboard
+
+Product purchasing system
+
+Live transaction ledger
+
+Real-time card scanning display
+
+Dashboard:
+
+http://157.173.101.159:9224/topup
+🚀 Getting Started
+Prerequisites
+
+Arduino IDE
+
+Python 3.x
+
+Modern web browser
+
+Hardware Setup
+
+Open ESP_RFID/ESP_RFID.ino in Arduino IDE
+
+Install libraries:
+
+ESP8266WiFi  
+PubSubClient  
+MFRC522  
+ArduinoJson
+
+Configure WiFi credentials and TEAM_ID
+
+Upload code to ESP8266
+
+Backend Setup
+cd Payment
+pip install Flask Flask-SocketIO Flask-Cors Flask-SQLAlchemy paho-mqtt
+python backend/app.py
+💳 Usage
+Card Scanning
+
+Place RFID card near reader → Dashboard updates instantly.
+
+Top Up Funds
+
+Use deposit authorization panel to add funds.
+
+Make Payments
+
+Select product → Click Acquire Asset → Transaction is recorded.
+
+🛠 Technologies Used
+Hardware
+
+ESP8266
+
+MFRC522 RFID
+
+Backend
+
+Python
+
+Flask
+
+SQLite
+
+MQTT
+
+WebSockets
+
+Frontend
+
+HTML
+
+Tailwind CSS
+
+JavaScript
