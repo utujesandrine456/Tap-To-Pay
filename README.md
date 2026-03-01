@@ -2,6 +2,7 @@
 
 Zephyr is a comprehensive RFID-based payment system designed for seamless and real-time transactions. The project integrates a hardware RFID reader, a backend server, and a frontend web application to create a complete and interactive payment experience.
 
+Frontend URL: http://157.173.101.159:9277/
 ## Table of Contents
 
 - [Features](#features)
