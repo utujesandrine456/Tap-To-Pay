@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZEPHYR | The Heritage Collection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=Inter:wght@200;400;600&family=JetBrains+Mono:wght@100&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #d4af37;
+            --gold-soft: #b89b5e;
+            --matte-black: #0d0d0d;
+            --border-white: rgba(255, 255, 255, 0.08);
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--matte-black); 
+            color: #d1d5db;
+            background-image: url("https://www.transparenttextures.com/patterns/dark-matter.png");
+        }
+
+        .serif-display { font-family: 'Cormorant Garamond', serif; font-weight: 300; }
+        .mono-elegant { font-family: 'JetBrains Mono', monospace; letter-spacing: 0.2em; font-size: 0.65rem; }
+
+        .museum-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-white);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .museum-card:hover {
+            border-color: var(--gold-soft);
+            background: rgba(212, 175, 55, 0.03);
+            transform: translateY(-8px);
+        }
+
+        .gold-underline {
+            position: relative;
+            display: inline-block;
+        }
+        .gold-underline::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            bottom: -4px;
+            left: 0;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .gallery-scroll::-webkit-scrollbar { width: 2px; }
+        .gallery-scroll::-webkit-scrollbar-thumb { background: var(--gold-soft); }
+
+        .img-reveal {
+            filter: grayscale(100%) contrast(1.1);
+            transition: all 0.8s ease;
+            opacity: 0.7;
+        }
+        .car-card:hover .img-reveal {
+            filter: grayscale(0%) contrast(1);
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .btn-classic {
+            border: 1px solid var(--gold-soft);
+            color: var(--gold-soft);
+            transition: all 0.4s ease;
+            background: transparent;
+            overflow: hidden;
+            position: relative;
+        }
+        .btn-classic:hover {
+            background: var(--gold-soft);
+            color: black;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+
+        .status-pulse {
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-20">
+
+    <header class="w-full py-8 px-12 flex justify-between items-start border-b border-white/5">
+        <div>
+            <h1 class="serif-display text-4xl tracking-widest text-white uppercase">Zephyr <span class="italic font-light text-gray-500">III</span></h1>
+            <p class="mono-elegant text-gray-600 mt-2">AUTOMATED_ASSET_VAULT_SYSTEM</p>
+        </div>
+        <div class="flex flex-col items-end gap-3">
+            <div class="flex items-center gap-4">
+                <span id="conn-text" class="mono-elegant text-gray-500 uppercase">System_Status: Offline</span>
+                <div id="conn-dot" class="w-2 h-2 rounded-full bg-red-800"></div>
+            </div>
+            <div class="bg-white/5 px-4 py-1 rounded-sm border border-white/5">
+                <span class="mono-elegant gold-text">ZEPHYR_PROTOCOL</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-12 mt-16 max-w-[1600px]">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+            
+            <section class="lg:col-span-4">
+                <div class="museum-card p-10 rounded-sm">
+                    <h2 class="serif-display text-2xl text-white italic mb-10 gold-underline">The Registry</h2>
+                    
+                    <div class="space-y-12">
+                        <div>
+                            <label class="mono-elegant text-gray-600 block mb-4 uppercase">Asset_Identifier</label>
+                            <p id="admin-uid" class="serif-display text-2xl text-white tracking-widest">NONE_DETECTED</p>
+                        </div>
+
+                        <div>
+                            <label class="mono-elegant text-gray-600 block mb-2 uppercase">Vault_Liquidity</label>
+                            <div class="flex items-baseline gap-2">
+                                <span id="admin-prev-balance" class="serif-display text-5xl text-white">0.00</span>
+                                <span class="mono-elegant text-gray-600">RWF</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-8 space-y-6">
+                            <input type="number" id="topup-amount" placeholder="0.00" 
+                                class="w-full bg-transparent border-b border-white/10 py-4 text-2xl serif-display focus:outline-none focus:border-gold-soft text-white transition-all">
+                            <button onclick="handleTransaction('/topup', 'topup-amount', 'admin-uid')" 
+                                class="w-full btn-classic py-4 serif-display italic text-xl tracking-widest">
+                                Authorize Deposit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="lg:col-span-8">
+                <div class="flex justify-between items-center mb-10">
+                    <h2 class="serif-display text-3xl text-white uppercase tracking-tighter">Current <span class="italic text-gray-500">Exhibits</span></h2>
+                    <div class="text-right">
+                        <span class="mono-elegant text-gray-600 block mb-1 uppercase">Acquisition_Sum</span>
+                        <span id="total-cost-display" class="serif-display text-4xl text-white">0</span>
+                        <span class="mono-elegant text-gray-600 ml-1">RWF</span>
+                    </div>
+                </div>
+
+                <div id="product-grid" class="grid grid-cols-2 xl:grid-cols-3 gap-6 gallery-scroll max-h-[600px] overflow-y-auto pr-4">
+                    </div>
+
+                <div class="mt-12 p-8 border border-white/5 bg-white/[0.01] flex flex-col md:flex-row justify-between items-center gap-8">
+                    <div class="flex items-center gap-8">
+                        <div>
+                            <label class="mono-elegant text-gray-600 block mb-2 uppercase">Lot_Qty</label>
+                            <input type="number" id="pay-qty" value="1" min="1" oninput="calculateTotal()" 
+                                class="w-20 bg-transparent border-b border-white/20 text-center serif-display text-2xl focus:outline-none focus:border-gold-soft">
+                        </div>
+                        <div class="h-10 w-[1px] bg-white/10 hidden md:block"></div>
+                        <div>
+                            <label class="mono-elegant text-gray-600 block mb-1 uppercase">Auth_Signature</label>
+                            <span id="pay-uid" class="serif-display italic text-gray-400">WAITING_FOR_CARD...</span>
+                        </div>
+                    </div>
+                    <button onclick="handleTransaction('/pay', 'total-cost-display', 'pay-uid')" 
+                        class="px-12 py-4 btn-classic serif-display text-xl uppercase tracking-[0.3em]">
+                        Acquire Asset
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <section class="mt-24">
+            <h3 class="serif-display text-xl text-gray-500 uppercase tracking-widest mb-8 text-center italic">Historical Record of Transactions</h3>
+            <div class="museum-card overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-white/5 mono-elegant text-gray-400">
+                        <tr>
+                            <th class="p-6 font-thin">LOG_TIME</th>
+                            <th class="p-6 font-thin">CLASSIFICATION</th>
+                            <th class="p-6 font-thin">VAULT_SIGNATURE</th>
+                            <th class="p-6 font-thin text-right">VALUATION</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ledger-body" class="serif-display text-lg text-gray-300 divide-y divide-white/5">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const socket = io(`http://${window.location.hostname}:9224`);
+        
+        const products = [
+            { id: 22, name: "Porsche 911 GT3", price: 185000000, img: "https://www.porschesugarland.com/static/dealer-24499/direkte_front_V1_1507_LR_highres.jpeg", cat: "Luxury" },
+            { id: 23, name: "Range Rover Sport", price: 120000000, img: "https://imgcdn.oto.com/large/gallery/exterior/43/1984/land-rover-range-rover-sport-full-front-view-781503.jpg", cat: "SUV" },
+            { id: 24, name: "BMW M4 Competition", price: 85000000, img: "https://imagecdnsa.zigwheels.ae/large/gallery/exterior/4/58/bmw-m4-coupe-full-front-view-652973.jpg", cat: "Sport" },
+            { id: 25, name: "Mercedes G-Wagon", price: 210000000, img: "https://w0.peakpx.com/wallpaper/529/474/HD-wallpaper-mercedes-benz-g63-amg-1-edition-2019-front-view-white-suv-new-white-g63-tuning-g-class-german-cars-gelandewagen-mercedes.jpg", cat: "SUV" },
+            { id: 26, name: "Audi RS e-tron GT", price: 140000000, img: "https://www.netcarshow.com/Audi-RS_e-tron_GT-2025-Front.26718efd.jpg", cat: "Electric" },
+            { id: 27, name: "Ferrari F8 Tributo", price: 350000000, img: "https://www.secret-classics.com/wp-content/uploads/2020/09/ferrarif8tributo-1.jpg", cat: "Luxury" },
+            { id: 28, name: "Lamborghini Urus", price: 280000000, img: "https://hips.hearstapps.com/hmg-prod/images/2021-lamborghini-urus-101-1595449178.jpg", cat: "SUV" },
+            { id: 29, name: "Ferrari SF90 Stradale", price: 450000000, img: "https://hips.hearstapps.com/mtg-prod/65c27c7089c84d000826edcc/by-design-ferrari-sf90-stradale-01.jpg", cat: "Exotic" },
+            { id: 30, name: "Bugatti Veyron", price: 1900000000, img: "https://www.netcarshow.com/Bugatti-Veyron-2009-Side_Profile.1af924c5.jpg", cat: "Hypercar" },
+            { id: 31, name: "Bugatti Chiron", price: 3200000000, img: "https://cimg3.ibsrv.net/ibimg/hgm/1920x1080-1/100/547/bugatti-chiron_100547167.jpg", cat: "Hypercar" },
+            { id: 32, name: "Dodge Challenger SRT", price: 85000000, img: "https://assets.newatlas.com/dims4/default/d992456/2147483647/strip/true/crop/1619x1080+0+0/resize/1619x1080!/format/webp/quality/90/?url=https%3A%2F%2Fnewatlas-brightspot.s3.amazonaws.com%2Farchive%2F2019-dodge-challenger-srt-hellcat-redeye-1.jpg", cat: "Muscle" },
+            { id: 33, name: "Chevrolet Camaro ZL1", price: 75000000, img: "https://hips.hearstapps.com/roa.h-cdn.co/assets/16/51/1482417346-camarozl1-103.jpg?resize=980:*", cat: "Muscle" },
+            { id: 34, name: "Ford Mustang Shelby GT500", price: 90000000, img: "https://cimg1.ibsrv.net/ibimg/hgm/1920x1080-1/100/722/2020-ford-mustang_100722017.jpg", cat: "Muscle" },
+            { id: 35, name: "Nissan GT-R Nismo", price: 150000000, img: "https://cimg0.ibsrv.net/ibimg/hgm/1920x1080-1/100/555/2017-nissan-gt-r-nismo_100555116.jpg", cat: "Sport" }
+        ];
+
+        let selectedProduct = null;
+
+        function initGrid() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = products.map(p => `
+                <div class="car-card museum-card p-6 cursor-pointer" onclick="selectProduct(${p.id}, this)">
+                    <div class="overflow-hidden mb-6 h-40">
+                        <img src="${p.img}" class="img-reveal w-full h-full object-cover">
+                    </div>
+                    <p class="serif-display text-white text-xl uppercase tracking-widest truncate">${p.name}</p>
+                    <p class="mono-elegant text-gray-500 mt-2">${p.price.toLocaleString()} RWF</p>
+                </div>
+            `).join('');
+        }
+
+        function selectProduct(id, element) {
+            document.querySelectorAll('.car-card').forEach(el => el.style.borderColor = 'rgba(255,255,255,0.08)');
+            element.style.borderColor = '#d4af37';
+            selectedProduct = products.find(p => p.id === id);
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            if (!selectedProduct) return;
+            const qty = parseInt(document.getElementById('pay-qty').value) || 0;
+            document.getElementById('total-cost-display').innerText = (selectedProduct.price * qty).toLocaleString();
+        }
+
+        socket.on('update_ui', (data) => {
+            document.getElementById('admin-uid').innerText = data.uid;
+            document.getElementById('pay-uid').innerText = data.uid;
+            document.getElementById('admin-prev-balance').innerText = data.balance.toLocaleString();
+            if (data.type === 'TOP-UP' || data.type === 'PAYMENT') addToLedger(data);
+        });
+
+        async function handleTransaction(endpoint, inputId, uidId) {
+            const uid = document.getElementById(uidId).innerText.replace('---', '').trim();
+            const inputEl = document.getElementById(inputId);
+            const amountVal = (inputEl.value || inputEl.innerText).replace(/,/g, '');
+            
+            if (uid.includes('DETECTED') || uid.includes('WAITING') || !amountVal || parseInt(amountVal) <= 0) {
+                alert("PLEASE VALIDATE IDENTITY AND SELECTION");
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://${window.location.hostname}:9224${endpoint}`, {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({ uid: uid, amount: parseInt(amountVal) })
+                });
+                if (response.ok) alert("IDENTITY AUTHORIZED. TRANSACTION COMPLETE.");
+                else { const err = await response.json(); alert(err.error); }
+            } catch (err) { alert("CONNECTION TO VAULT FAILED."); }
+        }
+
+        function addToLedger(data) {
+            const row = document.createElement('tr');
+            row.className = "hover:bg-white/[0.02] transition-all";
+            row.innerHTML = `
+                <td class="p-6 mono-elegant text-gray-600">${data.time || new Date().toLocaleTimeString()}</td>
+                <td class="p-6 italic tracking-widest">${data.type}</td>
+                <td class="p-6 mono-elegant opacity-40">${data.uid}</td>
+                <td class="p-6 text-right serif-display text-xl ${data.type === 'TOP-UP' ? "text-green-700" : "text-white"}">
+                    ${data.type === 'TOP-UP' ? '+' : '-'}${parseInt(data.amount).toLocaleString()}
+                </td>
+            `;
+            document.getElementById('ledger-body').prepend(row);
+        }
+
+        socket.on('connect', () => {
+            document.getElementById('conn-dot').className = "w-2 h-2 rounded-full bg-green-500 status-pulse";
+            document.getElementById('conn-text').innerText = "System_Status: Live";
+            document.getElementById('conn-text').className = "mono-elegant text-green-500";
+        });
+
+        initGrid();
+    </script>
+</body>
+</html>
