@@ -1,22 +1,9 @@
 💳 Tap-To-Pay Smart Payment System
+⭐ Secure RFID Cashless Payment Platform
+🌐 Frontend Dashboard
 
-
-🔒 Secure RFID-Based Cashless Payment System using ESP8266 + MQTT + Backend Validation
-
-🌐 Frontend Application
-
-👉 Live Frontend Dashboard:
-🔗 http://157.173.101.159:9277/
-
-The frontend dashboard allows:
-
-Transaction monitoring
-
-Wallet balance tracking
-
-Payment history viewing
-
-System analytics visualization
+🔗 Live Frontend:
+👉 https://tap-to-pay-frontend.vercel.app
 
 🏗 System Architecture
 RFID Card
@@ -27,20 +14,19 @@ MQTT Broker Communication
    ↓
 Backend API Validation
    ↓
-Database Transaction Storage
+Database Storage
    ↓
-Web Dashboard Updates
+Frontend Dashboard Display
 ✨ Features
 
-✔ RFID Card Authentication
-✔ Real-time Payment Processing
-✔ Secure Wallet Balance Verification
+✔ Secure RFID Authentication
+✔ Real-time Wallet Balance Verification
 ✔ Transaction Ledger Recording
-✔ Dashboard Monitoring System
-✔ Safe Payment Update Mechanism
+✔ MQTT IoT Communication
+✔ Dashboard Monitoring
 
-🧠 Technologies Used
-Hardware
+🧠 Technology Stack
+🔌 Hardware Layer
 
 ESP8266 Microcontroller
 
@@ -48,22 +34,20 @@ RFID Reader Module
 
 Buzzer Feedback System
 
-Software
+💻 Software Layer
 
-MQTT Communication Protocol
+MQTT Protocol
 
 Backend API Service
 
-Database Storage System
+Database Storage
 
 Web Frontend Dashboard
 
 ⚡ Installation
-Clone Project
 git clone https://github.com/utujesandrine456/Tap-To-Pay.git
-Navigate Project
 cd Tap-To-Pay
-🔌 Hardware Connection
+🔌 Hardware Pin Connections
 Component	ESP8266 Pin
 RFID SDA	D2
 RFID SCK	D5
@@ -73,17 +57,17 @@ Buzzer	D1
 💰 Payment Processing Flow
 RFID Scan
    ↓
-Send UID via MQTT
+Device Sends UID
    ↓
-Backend Validates Balance
+Backend Checks Balance
    ↓
-Update Wallet + Ledger
+Transaction Approved / Rejected
    ↓
-Send Response to Device
-🔐 Security Design
+Update Database + Dashboard
+🔐 Security Features
 
-Backend controlled authorization
+✔ Backend balance verification
 
-Ledger-based transaction auditing
+✔ Transaction auditing ledger
 
-Safe wallet update logic
+✔ Safe wallet update logic
