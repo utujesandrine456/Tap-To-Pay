@@ -1,149 +1,116 @@
-🚀 Zephyr: RFID Smart Payment System
-🌟 Overview
+# Zephyr: RFID Payment System
 
-Zephyr is a smart RFID-based payment system designed for fast, secure, and real-time transactions. The platform integrates hardware sensing, backend processing, and a modern web dashboard to create a seamless payment experience.
+Zephyr is a comprehensive RFID-based payment system designed for seamless and real-time transactions. The project integrates a hardware RFID reader, a backend server, and a frontend web application to create a complete and interactive payment experience.
 
-Users can scan RFID cards, check balances instantly, perform top-ups, and purchase products from an interactive dashboard.
+## Table of Contents
 
-✨ Features
+- [Features](#features)
+- [System Architecture](#system-architecture)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Hardware Setup](#hardware-setup)
+  - [Backend Setup](#backend-setup)
+  - [Frontend Access](#frontend-access)
+- [Usage](#usage)
+- [Technologies Used](#technologies-used)
 
-✅ Real-time RFID card detection
-✅ Instant balance and transaction updates
-✅ Secure payment and top-up system
-✅ Live dashboard synchronization
-✅ Centralized backend business logic
-✅ Persistent transaction storage using SQLite
+## Features
 
-🏗 System Architecture
-🧩 Hardware Layer (ESP8266 + RFID)
+- **Real-time Card Detection:** Instantly detects RFID cards and communicates their UIDs to the backend.
+- **Seamless Transactions:** Supports both payment and top-up functionalities through a user-friendly web interface.
+- **Live Dashboard:** A sophisticated frontend that displays real-time updates of card information, balance, and transaction history.
+- **Centralized Logic:** A robust backend server that manages all business logic, user data, and communication between components.
+- **Persistent Data:** Utilizes a SQLite database to store user card information and transaction records.
 
-Device: ESP8266
+## System Architecture
 
-RFID Module: MFRC522
+The Zephyr payment system is composed of three main components that work in concert:
 
-Functions:
+### 1. Hardware (ESP8266 RFID Reader)
 
-Connects to WiFi and MQTT broker
+The hardware component is responsible for the physical interaction with the RFID cards.
 
-Reads RFID card UID
+- **Device:** ESP8266
+- **RFID Module:** MFRC522
+- **Core Functionality:**
+    - Establishes a connection to a Wi-Fi network and an MQTT broker.
+    - Scans for RFID cards and publishes the card's UID to a designated MQTT topic.
+    - Subscribes to MQTT topics to receive real-time updates for payments and top-ups.
+    - Capable of writing updated balance information back to the RFID card.
 
-Sends transaction data to backend
+The source code for the hardware is located in the `ESP_RFID/ESP_RFID.ino` file.
 
-Writes updated balance to cards
+### 2. Backend (Flask Server)
 
-Code located in:
+The backend is the heart of the system, orchestrating all operations and data flow.
 
-ESP_RFID/ESP_RFID.ino
-⚙ Backend Layer (Flask Server)
+- **Framework:** Flask
+- **Database:** SQLite
+- **Real-time Communication:** Employs MQTT for hardware communication and Socket.IO for frontend updates.
+- **Core Functionality:**
+    - Manages user card data and balances within a SQLite database.
+    - Processes all payment and top-up requests.
+    - Acts as a bridge between the RFID reader and the web application.
+    - Pushes live updates to the frontend dashboard.
 
-Framework: Flask
+The backend application logic is defined in `backend/app.py`.
 
-Database: SQLite
+### 3. Frontend (Web Application)
 
-Communication:
+The frontend provides a rich and interactive user interface for the payment system.
 
-MQTT → Hardware communication
+- **Styling and Frameworks:** Built with Tailwind CSS and leverages Socket.IO for real-time data synchronization.
+- **Core Functionality:**
+    - Presents a "museum-themed" dashboard for a unique user experience.
+    - Facilitates topping up RFID cards and making payments for a curated list of products.
+    - Dynamically updates to show the current card UID, balance, and a ledger of transactions.
 
-Socket.IO → Frontend real-time updates
+The frontend is a single-page application, with its structure and code in `backend/templates/dashboard.html`.
 
-Responsibilities:
+## Getting Started
 
-Manage users and balances
+To get the Zephyr payment system up and running, follow the setup instructions for each component.
 
-Process payments and deposits
+### Prerequisites
 
-Broadcast dashboard updates
+- Arduino IDE for the hardware setup.
+- Python 3.x and `pip` for the backend server.
+- A modern web browser for the frontend application.
 
-Main file:
+### Hardware Setup
 
-backend/app.py
-🎨 Frontend Layer
+1.  Launch the Arduino IDE and open the `ESP_RFID/ESP_RFID.ino` file.
+2.  Install the necessary libraries from the Arduino Library Manager: `ESP8266WiFi`, `PubSubClient`, `MFRC522`, and `ArduinoJson`.
+3.  Modify the sketch to include your Wi-Fi credentials (`WIFI_SSID` and `WIFI_PASS`) and your `TEAM_ID`.
+4.  Connect your ESP8266 and upload the sketch.
 
-Technologies:
+### Backend Setup
 
-Tailwind CSS
+1.  Open your terminal and navigate to the `Payment` directory.
+2.  Install the required Python packages by running:
+    ```bash
+    pip install Flask Flask-SocketIO Flask-Cors Flask-SQLAlchemy paho-mqtt
+    ```
+3.  Start the backend server with the following command:
+    ```bash
+    python backend/app.py
+    ```
 
-Socket.IO
+### Frontend Access
 
-JavaScript
+1.  Once the backend server is running, open your web browser.
+2.  Navigate to `http://157.173.101.159:9277` to access the Zephyr dashboard.
 
-Features:
+## Usage
 
-Museum-themed interactive dashboard
+- **Card Scanning:** Simply bring an RFID card near the MFRC522 reader. The card's UID and current balance will appear on the dashboard.
+- **Topping Up:** Use the "Authorize Deposit" section to add funds to the scanned card.
+- **Making a Payment:** Select a product from the gallery, and click "Acquire Asset" to complete the purchase. The transaction will be reflected in the ledger.
 
-Product purchasing system
+## Technologies Used
 
-Live transaction ledger
-
-Real-time card scanning display
-
-Dashboard:
-
-http://157.173.101.159:9224/topup
-🚀 Getting Started
-Prerequisites
-
-Arduino IDE
-
-Python 3.x
-
-Modern web browser
-
-Hardware Setup
-
-Open ESP_RFID/ESP_RFID.ino in Arduino IDE
-
-Install libraries:
-
-ESP8266WiFi  
-PubSubClient  
-MFRC522  
-ArduinoJson
-
-Configure WiFi credentials and TEAM_ID
-
-Upload code to ESP8266
-
-Backend Setup
-cd Payment
-pip install Flask Flask-SocketIO Flask-Cors Flask-SQLAlchemy paho-mqtt
-python backend/app.py
-💳 Usage
-Card Scanning
-
-Place RFID card near reader → Dashboard updates instantly.
-
-Top Up Funds
-
-Use deposit authorization panel to add funds.
-
-Make Payments
-
-Select product → Click Acquire Asset → Transaction is recorded.
-
-🛠 Technologies Used
-Hardware
-
-ESP8266
-
-MFRC522 RFID
-
-Backend
-
-Python
-
-Flask
-
-SQLite
-
-MQTT
-
-WebSockets
-
-Frontend
-
-HTML
-
-Tailwind CSS
-
-JavaScript
+- **Hardware:** ESP8266, MFRC522 RFID Module
+- **Backend:** Python, Flask, Flask-SocketIO, Flask-SQLAlchemy
+- **Frontend:** HTML, Tailwind CSS, JavaScript, Socket.IO
+- **Communication:** MQTT, WebSockets
+- **Database:** SQLite
