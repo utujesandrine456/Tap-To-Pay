@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 from flask_socketio import SocketIO
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 import paho.mqtt.client as mqtt
-from paho.mqtt.enums import CallbackAPIVersion
+from paho.mqtt.enums import CallbackAPIVersion # Added for v2 compatibility
 import json
 from datetime import datetime
 import os
@@ -78,10 +78,62 @@ try:
 except Exception as e:
     print(f"MQTT Connection Failed: {e}")
 
-# --- ROUTES (STAYS SAME) ---
+# --- ROUTES ---
 @app.route('/')
-def index():
+def home():
+    return render_template('index.html')
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+@app.route('/login/agent', methods=['GET'])
+def agent_login():
+    return render_template('agent_login.html')
+
+@app.route('/login/sales', methods=['GET'])
+def sales_login():
+    return render_template('sales_login.html')
+
+@app.route('/login/agent', methods=['POST'])
+def login_agent():
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    if username == 'agent' and password == 'agentpass':
+        session['role'] = 'agent'
+        return redirect(url_for('topup_dashboard'))
+    else:
+        return redirect(url_for('agent_login'))
+
+@app.route('/login/sales', methods=['POST'])
+def login_sales():
+    username = request.form.get('username')
+    password = request.form.get('password')
+
+    if username == 'sales' and password == 'salespass':
+        session['role'] = 'sales'
+        return redirect(url_for('payment_dashboard'))
+    else:
+        return redirect(url_for('sales_login'))
+
+@app.route('/topup-dashboard')
+def topup_dashboard():
+    if session.get('role') != 'agent':
+        return redirect(url_for('agent_login'))
     return render_template('dashboard.html')
+
+@app.route('/payment-dashboard')
+def payment_dashboard():
+    if session.get('role') != 'sales':
+        return redirect(url_for('sales_login'))
+    return render_template('dashboard.html')
+
+@app.route('/admin')
+def admin():
+    users = UserCard.query.all()
+    transactions = Transaction.query.all()
+    return render_template('admin.html', users=users, transactions=transactions)
 
 @app.route('/pay', methods=['POST'])
 def pay():

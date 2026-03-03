@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZEPHYR | Home</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=Inter:wght@200;400;600&family=JetBrains+Mono:wght@100&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #d4af37;
+            --gold-soft: #b89b5e;
+            --matte-black: #0d0d0d;
+            --border-white: rgba(255, 255, 255, 0.08);
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--matte-black); 
+            color: #d1d5db;
+            background-image: url("https://www.transparenttextures.com/patterns/dark-matter.png");
+        }
+
+        .serif-display { font-family: 'Cormorant Garamond', serif; font-weight: 300; }
+        .mono-elegant { font-family: 'JetBrains Mono', monospace; letter-spacing: 0.2em; font-size: 0.65rem; }
+
+        .museum-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-white);
+            transition: all 0.4s ease;
+        }
+
+        .museum-card:hover {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--gold-soft);
+        }
+
+        .btn-classic {
+            border: 1px solid var(--gold-soft);
+            color: var(--gold-soft);
+            transition: all 0.4s ease;
+            background: transparent;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-classic:hover {
+            background: var(--gold-soft);
+            color: black;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center">
+
+    <div class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-16">
+        
+        <!-- Agent Login Card -->
+        <a href="/login/agent" class="w-full museum-card p-10 rounded-sm">
+            <header class="text-center mb-10">
+                <h1 class="serif-display text-4xl tracking-widest text-white uppercase">Agent Portal</h1>
+                <p class="mono-elegant text-gray-600 mt-2">TOP-UP_OPERATIONS</p>
+            </header>
+            <div class="pt-6">
+                <div 
+                    class="w-full btn-classic py-4 serif-display italic text-xl tracking-widest">
+                    Login as Agent
+                </div>
+            </div>
+        </a>
+
+        <!-- Sales Login Card -->
+        <a href="/login/sales" class="w-full museum-card p-10 rounded-sm">
+            <header class="text-center mb-10">
+                <h1 class="serif-display text-4xl tracking-widest text-white uppercase">Sales Portal</h1>
+                <p class="mono-elegant text-gray-600 mt-2">PAYMENT_OPERATIONS</p>
+            </header>
+            <div class="pt-6">
+                <div
+                    class="w-full btn-classic py-4 serif-display italic text-xl tracking-widest">
+                    Login as Salesperson
+                </div>
+            </div>
+        </a>
+    </div>
+
+</body>
+</html>

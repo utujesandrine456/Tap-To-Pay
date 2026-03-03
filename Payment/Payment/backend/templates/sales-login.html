@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZEPHYR | Sales Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=Inter:wght@200;400;600&family=JetBrains+Mono:wght@100&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #d4af37;
+            --gold-soft: #b89b5e;
+            --matte-black: #0d0d0d;
+            --border-white: rgba(255, 255, 255, 0.08);
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--matte-black); 
+            color: #d1d5db;
+            background-image: url("https://www.transparenttextures.com/patterns/dark-matter.png");
+        }
+
+        .serif-display { font-family: 'Cormorant Garamond', serif; font-weight: 300; }
+        .mono-elegant { font-family: 'JetBrains Mono', monospace; letter-spacing: 0.2em; font-size: 0.65rem; }
+
+        .museum-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border-white);
+        }
+
+        .btn-classic {
+            border: 1px solid var(--gold-soft);
+            color: var(--gold-soft);
+            transition: all 0.4s ease;
+            background: transparent;
+        }
+        .btn-classic:hover {
+            background: var(--gold-soft);
+            color: black;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center">
+
+    <div class="w-full max-w-md">
+        
+        <header class="text-center mb-10">
+            <h1 class="serif-display text-4xl tracking-widest text-white uppercase">Sales Portal</h1>
+            <p class="mono-elegant text-gray-600 mt-2">PAYMENT_OPERATIONS</p>
+        </header>
+
+        <main class="museum-card p-10 rounded-sm">
+            <form method="POST" action="/login/sales" class="space-y-8">
+                <div>
+                    <label for="sales-username" class="mono-elegant text-gray-600 block mb-4 uppercase">Salesperson ID</label>
+                    <input type="text" id="sales-username" name="username" value="sales" required
+                        class="w-full bg-transparent border-b border-white/10 py-3 text-lg serif-display focus:outline-none focus:border-gold-soft text-white transition-all">
+                </div>
+
+                <div>
+                    <label for="sales-password" class="mono-elegant text-gray-600 block mb-4 uppercase">Password</label>
+                    <input type="password" id="sales-password" name="password" value="salespass" required
+                        class="w-full bg-transparent border-b border-white/10 py-3 text-lg serif-display focus:outline-none focus:border-gold-soft text-white transition-all">
+                </div>
+
+                <div class="pt-6">
+                    <button type="submit" 
+                        class="w-full btn-classic py-4 serif-display italic text-xl tracking-widest">
+                        Process Transaction
+                    </button>
+                </div>
+            </form>
+        </main>
+    </div>
+
+</body>
+</html>
