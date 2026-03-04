@@ -129,6 +129,26 @@ def payment_dashboard():
         return redirect(url_for('sales_login'))
     return render_template('dashboard.html')
 
+@app.route('/consolidated-dashboard')
+def consolidated_dashboard():
+    if session.get('role') not in ('agent', 'sales'):
+        return redirect(url_for('login'))
+    users = UserCard.query.order_by(UserCard.last_seen.desc()).all()
+    transactions = Transaction.query.order_by(Transaction.timestamp.desc()).all()
+    topups = [tx for tx in transactions if tx.type == "TOP-UP"]
+    total_balances = sum(user.balance for user in users)
+    total_topups = sum(tx.amount for tx in topups)
+    total_payments = sum(tx.amount for tx in transactions if tx.type == "PAYMENT")
+    return render_template(
+        'consolidated_dashboard.html',
+        users=users,
+        transactions=transactions,
+        topups=topups,
+        total_balances=total_balances,
+        total_topups=total_topups,
+        total_payments=total_payments
+    )
+
 @app.route('/admin')
 def admin():
     users = UserCard.query.all()
@@ -140,16 +160,32 @@ def pay():
     data = request.json
     uid = str(data.get('uid')).upper().strip()
     amount = int(data.get('amount', 0))
+    product_name = str(data.get('product_name', 'General Purchase')).strip() or 'General Purchase'
+    try:
+        quantity = max(int(data.get('quantity', 1)), 1)
+    except (TypeError, ValueError):
+        quantity = 1
     card = UserCard.query.filter_by(uid=uid).first()
     if not card: return jsonify({"error": "Card not registered"}), 404
     if card.balance >= amount:
         card.balance -= amount
-        db.session.add(Transaction(uid=uid, amount=amount, type="PAYMENT"))
+        tx = Transaction(uid=uid, amount=amount, type="PAYMENT")
+        db.session.add(tx)
         db.session.commit()
         mqtt_client.publish(TOPIC_PAY, json.dumps({"uid": uid, "new_balance": card.balance}))
-        res_data = {"uid": uid, "balance": card.balance, "amount": amount, "type": "PAYMENT", "time": datetime.now().strftime("%H:%M:%S")}
+        tx_time = tx.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        res_data = {"uid": uid, "balance": card.balance, "amount": amount, "type": "PAYMENT", "time": datetime.now().strftime("%H:%M:%S"), "transaction_id": tx.id}
         socketio.emit('update_ui', res_data)
-        return jsonify({"status": "success", "new_balance": card.balance}), 200
+        receipt = {
+            "transaction_id": tx.id,
+            "uid": uid,
+            "item": product_name,
+            "quantity": quantity,
+            "amount": amount,
+            "remaining_balance": card.balance,
+            "timestamp": tx_time
+        }
+        return jsonify({"status": "success", "new_balance": card.balance, "receipt": receipt}), 200
     return jsonify({"error": "Insufficient Funds"}), 400
 
 @app.route('/topup', methods=['POST'])
