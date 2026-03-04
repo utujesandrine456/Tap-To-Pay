@@ -151,6 +151,9 @@
                 <span id="conn-text" class="mono-elegant text-gray-500 uppercase">System_Status: Offline</span>
                 <div id="conn-dot" class="w-2 h-2 rounded-full bg-red-800"></div>
             </div>
+            <a href="/consolidated-dashboard" class="mono-elegant text-gray-400 hover:text-white border border-white/10 px-4 py-2 transition-all">
+                VIEW_CONSOLIDATED_DASHBOARD
+            </a>
             <div class="bg-white/5 px-4 py-1 rounded-sm border border-white/5">
                 <span class="mono-elegant gold-text">ZEPHYR_PROTOCOL</span>
             </div>
@@ -325,14 +328,61 @@
             }
 
             try {
+                const payload = { uid: uid, amount: parseInt(amountVal) };
+                if (endpoint === '/pay') {
+                    payload.product_name = selectedProduct ? selectedProduct.name : 'General Purchase';
+                    payload.quantity = parseInt(document.getElementById('pay-qty').value) || 1;
+                }
                 const response = await fetch(`http://${window.location.hostname}:9224${endpoint}`, {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({ uid: uid, amount: parseInt(amountVal) })
+                    body: JSON.stringify(payload)
                 });
-                if (response.ok) alert("IDENTITY AUTHORIZED. TRANSACTION COMPLETE.");
-                else { const err = await response.json(); alert(err.error); }
+                const result = await response.json();
+                if (response.ok) {
+                    alert("IDENTITY AUTHORIZED. TRANSACTION COMPLETE.");
+                    if (endpoint === '/pay' && result.receipt) {
+                        showReceipt(result.receipt);
+                    }
+                } else {
+                    alert(result.error || "TRANSACTION FAILED");
+                }
             } catch (err) { alert("CONNECTION TO VAULT FAILED."); }
+        }
+
+        function showReceipt(receipt) {
+            const receiptWindow = window.open('', '_blank', 'width=420,height=680');
+            if (!receiptWindow) return;
+            receiptWindow.document.write(`
+                <html>
+                <head>
+                    <title>Payment Receipt</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; color: #111; }
+                        .wrap { border: 1px solid #ddd; padding: 16px; }
+                        h2 { margin-top: 0; }
+                        .row { display: flex; justify-content: space-between; margin: 8px 0; }
+                        .small { color: #666; font-size: 12px; }
+                        .total { font-weight: bold; border-top: 1px solid #ddd; margin-top: 12px; padding-top: 10px; }
+                        button { margin-top: 16px; padding: 8px 14px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="wrap">
+                        <h2>ZEPHYR RECEIPT</h2>
+                        <div class="small">Transaction #${receipt.transaction_id}</div>
+                        <div class="small">${receipt.timestamp}</div>
+                        <div class="row"><span>Card UID:</span><strong>${receipt.uid}</strong></div>
+                        <div class="row"><span>Item:</span><strong>${receipt.item}</strong></div>
+                        <div class="row"><span>Quantity:</span><strong>${receipt.quantity}</strong></div>
+                        <div class="row total"><span>Paid:</span><strong>${Number(receipt.amount).toLocaleString()} RWF</strong></div>
+                        <div class="row"><span>Remaining Balance:</span><strong>${Number(receipt.remaining_balance).toLocaleString()} RWF</strong></div>
+                        <button onclick="window.print()">Print Receipt</button>
+                    </div>
+                </body>
+                </html>
+            `);
+            receiptWindow.document.close();
         }
 
         function addToLedger(data) {
